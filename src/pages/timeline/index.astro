@@ -1,0 +1,21 @@
+---
+import Base from '@/layouts/Base.astro';
+import TimelineStats from '@/components/TimelineStats.astro';
+import TimelineList from '@/components/TimelineList.astro';
+import { getAllPosts } from '@/utils/posts';
+
+const allPosts = await getAllPosts();
+const viewParam = Astro.url.searchParams.get('view');
+const currentView = ['relaxed', 'dense', 'overview'].includes(viewParam ?? '')
+  ? (viewParam as 'relaxed' | 'dense' | 'overview')
+  : 'relaxed';
+---
+
+<Base title="時間線" description="按時間順序瀏覽所有文章。" centered={false}>
+  <div class="mt-8 mb-20">
+    <TimelineStats posts={allPosts} currentView={currentView} />
+    <div class="mt-12">
+      <TimelineList posts={allPosts} />
+    </div>
+  </div>
+</Base>

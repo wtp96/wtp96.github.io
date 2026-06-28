@@ -1,0 +1,50 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import { formatDate } from '@/utils/posts';
+import { CATEGORIES } from '@/consts';
+
+type Props = {
+  posts: CollectionEntry<'posts'>[];
+  groupByYear?: boolean;
+};
+
+const { posts, groupByYear = true } = Astro.props;
+
+const groups = groupByYear
+  ? Object.entries(
+      posts.reduce<Record<string, typeof posts>>((acc, post) => {
+        const year = post.data.date.getFullYear().toString();
+        if (!acc[year]) acc[year] = [];
+        acc[year].push(post);
+        return acc;
+      }, {})
+    )
+      .sort(([a], [b]) => Number(b) - Number(a))
+      .map(([year, items]) => ({ year, items }))
+  : [{ year: null, items: posts }];
+---
+
+<div class="space-y-10">
+  {
+    groups.map(({ year, items }) => (
+      <section>
+        {year && <h2 class="text-2xl font-semibold mb-6 text-text-secondary">{year}</h2>}
+        <ul class="space-y-6">
+          {items.map((post) => (
+            <li class="group" data-tags={post.data.tags?.join(',')}>
+              <a href={`/${post.data.category}/${post.slug}/`} class="block">
+                <div class="flex items-center gap-3 text-xs text-text-secondary mb-1">
+                  <time datetime={post.data.date.toISOString()}>{formatDate(post.data.date)}</time>
+                  <span>·</span>
+                  <span class="group-hover:text-accent transition-colors">{CATEGORIES[post.data.category] || post.data.category}</span>
+                </div>
+                <h3 class="text-lg font-medium group-hover:text-accent transition-colors">{post.data.title}</h3>
+                <p class="mt-1 text-sm text-text-secondary line-clamp-2">{post.data.description}</p>
+              </a>
+            </li>
+          ))}
+        </ul>
+      </section>
+    ))
+  }
+</div>

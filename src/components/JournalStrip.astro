@@ -1,0 +1,31 @@
+---
+import { getCollection } from 'astro:content';
+import { formatDate } from '@/utils/posts';
+
+const allPosts = await getCollection('posts');
+const journals = allPosts
+  .filter((p) => p.data.category === 'journal' && !p.data.draft)
+  .sort((a, b) => b.data.date.getTime() - a.data.date.getTime())
+  .slice(0, 5);
+---
+
+<section class="mb-14">
+  <div class="flex items-center justify-between mb-4">
+    <h2 class="text-lg font-semibold">生活紀錄</h2>
+    <a href="/journal/" class="text-sm text-accent hover:opacity-80">查看更多 →</a>
+  </div>
+  <div class="flex gap-4 overflow-x-auto pb-4 snap-x">
+    {
+      journals.map((post) => (
+        <a
+          href={`/journal/${post.slug}/`}
+          class="flex-shrink-0 w-64 snap-start group rounded-xl border border-border bg-bg-elevated p-4 hover:border-accent transition-colors"
+        >
+          <time class="text-xs text-text-secondary">{formatDate(post.data.date)}</time>
+          <h3 class="mt-2 font-medium line-clamp-2 group-hover:text-accent transition-colors">{post.data.title}</h3>
+          <p class="mt-2 text-sm text-text-secondary line-clamp-3">{post.data.description}</p>
+        </a>
+      ))
+    }
+  </div>
+</section>

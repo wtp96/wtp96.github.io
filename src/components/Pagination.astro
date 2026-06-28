@@ -1,0 +1,40 @@
+---
+type Props = {
+  currentPage: number;
+  totalPages: number;
+  basePath: string;
+};
+
+const { currentPage, totalPages, basePath } = Astro.props;
+
+function pageHref(page: number) {
+  if (page === 1) return basePath;
+  return `${basePath}page/${page}/`;
+}
+---
+
+{
+  totalPages > 1 && (
+    <nav class="flex items-center justify-between mt-12 text-sm" aria-label="分頁" data-pagination>
+      {currentPage > 1 ? (
+        <a href={pageHref(currentPage - 1)} class="px-3 py-2 rounded-md border border-border hover:bg-bg-elevated transition-colors">
+          ← 上一頁
+        </a>
+      ) : (
+        <span class="px-3 py-2 rounded-md border border-border text-text-secondary cursor-not-allowed">← 上一頁</span>
+      )}
+
+      <span class="text-text-secondary">
+        {currentPage} / {totalPages}
+      </span>
+
+      {currentPage < totalPages ? (
+        <a href={pageHref(currentPage + 1)} class="px-3 py-2 rounded-md border border-border hover:bg-bg-elevated transition-colors">
+          下一頁 →
+        </a>
+      ) : (
+        <span class="px-3 py-2 rounded-md border border-border text-text-secondary cursor-not-allowed">下一頁 →</span>
+      )}
+    </nav>
+  )
+}

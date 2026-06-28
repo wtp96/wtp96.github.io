@@ -1,0 +1,61 @@
+---
+import ThemeToggle from './ThemeToggle';
+import MobileMenu from './MobileMenu.astro';
+
+const navLinks = [
+  { slug: 'journal', label: '生活紀錄' },
+  { slug: 'random', label: '雜談' },
+  { slug: 'frontend', label: '全栈' },
+  { slug: 'software-development', label: '軟體工程' },
+  { slug: 'devnote', label: '開發筆記' },
+  { slug: 'timeline', label: '時間線' },
+];
+---
+
+<header class="sticky top-0 z-30 w-full border-b border-border bg-bg/80 backdrop-blur-md">
+  <div class="max-w-[68ch] mx-auto px-5 sm:px-6 h-14 flex items-center justify-between">
+    <a href={import.meta.env.BASE_URL} class="text-lg font-semibold tracking-tight hover:opacity-80">WTP的部落格</a>
+
+    <div class="flex items-center gap-1">
+      <nav class="hidden md:flex items-center gap-1 text-sm mr-2">
+        {
+          navLinks.map((link) => (
+            <a
+              href={`/${link.slug}/`}
+              class="px-2 py-1 rounded-md hover:bg-bg-elevated transition-colors"
+            >
+              {link.label}
+            </a>
+          ))
+        }
+      </nav>
+
+      <button
+        id="search-trigger"
+        type="button"
+        aria-label="搜尋"
+        class="hidden sm:flex items-center gap-2 px-2 py-1.5 text-sm text-text-secondary rounded-md hover:bg-bg-elevated transition-colors"
+      >
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M18.031 16.617 22.314 20.899 20.899 22.314 16.617 18.031A9.96 9.96 0 0 1 11 20C6.032 20 2 15.968 2 11S6.032 2 11 2s9 4.032 9 9a9.96 9.96 0 0 1-1.969 5.617Zm-2.006-.042A7.96 7.96 0 0 0 19 11c0-4.411-3.589-8-8-8s-8 3.589-8 8 3.589 8 8 8a7.96 7.96 0 0 0 5.575-2.329ZM7.5 11h1v-1h-1v1Zm3 0h1v-1h-1v1Zm3 0h1v-1h-1v1Z" />
+        </svg>
+        <span class="text-xs">Ctrl K</span>
+      </button>
+
+      <ThemeToggle client:only="solid-js" />
+      <MobileMenu />
+    </div>
+  </div>
+</header>
+
+<script>
+  document.addEventListener('keydown', (e) => {
+    if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+      e.preventDefault();
+      window.dispatchEvent(new CustomEvent('open-search'));
+    }
+  });
+  document.getElementById('search-trigger')?.addEventListener('click', () => {
+    window.dispatchEvent(new CustomEvent('open-search'));
+  });
+</script>

@@ -1,0 +1,72 @@
+---
+import Base from '@/layouts/Base.astro';
+import PostList from '@/components/PostList.astro';
+import Pagination from '@/components/Pagination.astro';
+import { getAllPosts, getPostsByCategory, isValidCategory } from '@/utils/posts';
+import { CATEGORIES, CATEGORY_SLUGS, POSTS_PER_PAGE } from '@/consts';
+
+export async function getStaticPaths() {
+  return CATEGORY_SLUGS.map((category) => ({ params: { category } }));
+}
+
+const { category } = Astro.params;
+if (!isValidCategory(category)) {
+  return Astro.redirect('/404/');
+}
+
+const allPosts = await getAllPosts();
+const categoryPosts = getPostsByCategory(allPosts, category);
+const totalPages = Math.ceil(categoryPosts.length / POSTS_PER_PAGE);
+const posts = categoryPosts.slice(0, POSTS_PER_PAGE);
+const categoryLabel = CATEGORIES[category] || category;
+---
+
+<Base title={categoryLabel} description={`${categoryLabel} 分類下的所有文章。`} centered={false}>
+  <div class="mt-8 mb-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+    <h1 class="text-2xl font-semibold">{categoryLabel}</h1>
+    <div id="tag-filter" class="hidden items-center gap-2 text-sm">
+      <span class="text-text-secondary">篩選：</span>
+      <span id="tag-filter-name" class="px-2 py-0.5 rounded-full border border-border bg-bg-elevated text-xs font-medium"></span>
+      <a href={`/${category}/`} class="text-xs text-text-secondary hover:text-accent transition-colors">清除</a>
+    </div>
+  </div>
+  <PostList posts={posts} />
+  <Pagination currentPage={1} totalPages={totalPages} basePath={`/${category}/`} />
+
+  <script is:inline>
+    (function () {
+      const params = new URLSearchParams(window.location.search);
+      const tag = params.get('tag');
+      if (!tag) return;
+
+      const filterBar = document.getElementById('tag-filter');
+      const filterName = document.getElementById('tag-filter-name');
+      if (filterBar && filterName) {
+        filterBar.classList.remove('hidden');
+        filterBar.classList.add('flex');
+        filterName.textContent = '#' + tag;
+      }
+
+      let visibleCount = 0;
+      document.querySelectorAll('[data-tags]').forEach((el) => {
+        const tags = (el.getAttribute('data-tags') || '').split(',').filter(Boolean);
+        if (tags.includes(tag)) {
+          el.classList.remove('hidden');
+          visibleCount++;
+        } else {
+          el.classList.add('hidden');
+        }
+      });
+
+      // Hide year headings when all their items are hidden
+      document.querySelectorAll('.space-y-10 > section').forEach((section) => {
+        const visibleItems = section.querySelectorAll('[data-tags]:not(.hidden)');
+        section.classList.toggle('hidden', visibleItems.length === 0);
+      });
+
+      // Hide pagination when filtering by tag
+      const pagination = document.querySelector('[data-pagination]') || document.querySelector('.pagination');
+      if (pagination) pagination.classList.add('hidden');
+    })();
+  </script>
+</Base>

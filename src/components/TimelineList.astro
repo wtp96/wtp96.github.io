@@ -1,0 +1,72 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import { groupPostsByYearAndMonth, getMonthLabel, formatDateISO } from '@/utils/posts';
+import { CATEGORIES } from '@/consts';
+
+type Props = {
+  posts: CollectionEntry<'posts'>[];
+  currentYear?: string;
+};
+
+const { posts, currentYear } = Astro.props;
+const groups = groupPostsByYearAndMonth(posts);
+---
+
+<div class="space-y-12">
+  {
+    groups.map(({ year, months, count }) => (
+      <section>
+        <div class="flex items-baseline gap-3 mb-6">
+          <h2 class="text-3xl sm:text-4xl font-light text-text tracking-tight">{year}</h2>
+          <span class="text-sm text-text-secondary">本年 {count} 篇</span>
+        </div>
+
+        <div class="space-y-8">
+          {months.map(({ month, items }) => {
+            const { zh, en } = getMonthLabel(month);
+            return (
+              <div>
+                <h3 class="text-sm font-medium text-text-secondary mb-4 tracking-wide">
+                  {zh} · {en}
+                </h3>
+                <ul class="space-y-3">
+                  {items.map((post) => {
+                    const day = post.data.date.getDate();
+                    const categoryLabel = CATEGORIES[post.data.category] || post.data.category;
+                    const metaParts: string[] = [];
+                    if (post.data.mood) metaParts.push(`心情：${post.data.mood}`);
+                    if (post.data.weather) metaParts.push(`天氣：${post.data.weather}`);
+                    if (metaParts.length === 0) metaParts.push(categoryLabel);
+                    const meta = metaParts.join(' · ');
+
+                    return (
+                      <li class="group">
+                        <a
+                          href={`/${post.data.category}/${post.slug}/`}
+                          class="flex items-baseline gap-4 py-1.5 -mx-2 px-2 rounded-md hover:bg-bg-elevated/50 transition-colors"
+                        >
+                          <time
+                            datetime={formatDateISO(post.data.date)}
+                            class="w-8 text-sm text-text-secondary tabular-nums shrink-0"
+                          >
+                            {day}
+                          </time>
+                          <span class="flex-1 text-[15px] text-text group-hover:text-accent transition-colors truncate">
+                            {post.data.title}
+                          </span>
+                          <span class="hidden sm:block text-xs text-text-secondary truncate max-w-[40%]">
+                            {meta}
+                          </span>
+                        </a>
+                      </li>
+                    );
+                  })}
+                </ul>
+              </div>
+            );
+          })}
+        </div>
+      </section>
+    ))
+  }
+</div>

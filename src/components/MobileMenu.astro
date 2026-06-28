@@ -1,0 +1,67 @@
+---
+import { CATEGORIES } from '@/consts';
+---
+
+<button
+  id="mobile-menu-btn"
+  type="button"
+  aria-label="開啟選單"
+  class="md:hidden p-2 rounded-md hover:bg-bg-elevated transition-colors"
+>
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+    <path d="M3 4h18v2H3V4Zm0 7h18v2H3v-2Zm0 7h18v2H3v-2Z" />
+  </svg>
+</button>
+
+<div
+  id="mobile-menu"
+  class="fixed inset-0 z-40 hidden"
+  aria-hidden="true"
+>
+  <div class="absolute inset-0 bg-black/20 backdrop-blur-sm" id="mobile-menu-backdrop"></div>
+  <div class="absolute right-0 top-0 h-full w-64 bg-bg border-l border-border p-6 shadow-xl">
+    <button
+      id="mobile-menu-close"
+      type="button"
+      aria-label="關閉選單"
+      class="mb-6 p-2 -mr-2 rounded-md hover:bg-bg-elevated"
+    >
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+        <path d="m12 10.586 4.95-4.95 1.414 1.414-4.95 4.95 4.95 4.95-1.414 1.414-4.95-4.95-4.95 4.95-1.414-1.414 4.95-4.95-4.95-4.95L7.05 5.636l4.95 4.95Z" />
+      </svg>
+    </button>
+    <nav class="flex flex-col gap-3 text-sm">
+      <a href="/" class="py-1 hover:text-accent">首頁</a>
+      <a href="/timeline/" class="py-1 hover:text-accent">時間線</a>
+      <a href="/journal/" class="py-1 hover:text-accent">生活紀錄</a>
+      <a href="/random/" class="py-1 hover:text-accent">雜談</a>
+      <a href="/frontend/" class="py-1 hover:text-accent">全栈</a>
+      <a href="/software-development/" class="py-1 hover:text-accent">軟體工程</a>
+      <a href="/devnote/" class="py-1 hover:text-accent">開發筆記</a>
+      <a href="/cs/" class="py-1 hover:text-accent">計算機科學</a>
+      <a href="/reading/" class="py-1 hover:text-accent">讀書、課程筆記</a>
+      <a href="/now/" class="py-1 hover:text-accent">現在</a>
+      <a href="/about/" class="py-1 hover:text-accent">關於</a>
+    </nav>
+  </div>
+</div>
+
+<script>
+  const btn = document.getElementById('mobile-menu-btn');
+  const menu = document.getElementById('mobile-menu');
+  const close = document.getElementById('mobile-menu-close');
+  const backdrop = document.getElementById('mobile-menu-backdrop');
+
+  function open() {
+    menu?.classList.remove('hidden');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeMenu() {
+    menu?.classList.add('hidden');
+    document.body.style.overflow = '';
+  }
+
+  btn?.addEventListener('click', open);
+  close?.addEventListener('click', closeMenu);
+  backdrop?.addEventListener('click', closeMenu);
+</script>

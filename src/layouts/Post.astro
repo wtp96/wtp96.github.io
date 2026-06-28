@@ -1,0 +1,77 @@
+---
+import Base from './Base.astro';
+import { formatDate } from '@/utils/posts';
+import { CATEGORIES } from '@/consts';
+import CopyCode from '@/components/CopyCode.astro';
+
+type Props = {
+  frontmatter: {
+    title: string;
+    description: string;
+    date: Date;
+    category: string;
+  };
+};
+
+const { frontmatter } = Astro.props;
+const { title, description, date, category } = frontmatter;
+const categoryLabel = CATEGORIES[category] || category;
+---
+
+<Base title={title} description={description} article date={date} centered={false}>
+  <div
+    id="reading-progress"
+    class="fixed top-0 left-0 h-[2px] bg-accent z-[60] origin-left scale-x-0 will-change-transform"
+    aria-hidden="true"
+  />
+  <article class="mt-8 sm:mt-12 mb-20">
+    <header class="mb-10 max-w-[68ch] mx-auto">
+      <div class="flex items-center gap-3 text-sm text-text-secondary mb-4">
+        <time datetime={date.toISOString()}>{formatDate(date)}</time>
+        <span>·</span>
+        <a href={`/${category}/`} class="text-accent hover:opacity-80">{categoryLabel}</a>
+      </div>
+      <h1 class="text-xl sm:text-2xl font-semibold leading-tight tracking-tight">{title}</h1>
+    </header>
+    <div class="prose max-w-none dark:prose-invert">
+      <slot />
+    </div>
+  </article>
+  <CopyCode />
+
+  <script is:inline>
+    (function () {
+      const bar = document.getElementById('reading-progress');
+      const article = document.querySelector('article');
+      if (!bar || !article) return;
+
+      let rafId = null;
+      const update = () => {
+        const rect = article.getBoundingClientRect();
+        const total = article.offsetHeight - window.innerHeight;
+        const scrolled = Math.max(0, -rect.top);
+        const pct = total > 0 ? Math.min(1, scrolled / total) : 1;
+        bar.style.transform = `scaleX(${pct})`;
+        rafId = null;
+      };
+
+      const onScroll = () => {
+        if (rafId) return;
+        rafId = requestAnimationFrame(update);
+      };
+
+      const start = () => {
+        window.addEventListener('scroll', onScroll, { passive: true });
+        update();
+      };
+
+      const stop = () => {
+        window.removeEventListener('scroll', onScroll);
+        if (rafId) cancelAnimationFrame(rafId);
+      };
+
+      start();
+      document.addEventListener('astro:before-swap', stop, { once: true });
+    })();
+  </script>
+</Base>

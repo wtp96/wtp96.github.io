@@ -1,0 +1,51 @@
+---
+---
+
+<section class="mt-10 mb-14">
+  <div class="rounded-xl border border-border bg-bg-elevated shadow-sm overflow-hidden font-mono text-sm">
+    <div class="flex items-center gap-1.5 px-4 py-2.5 border-b border-border bg-bg">
+      <span class="w-3 h-3 rounded-full bg-red-400"></span>
+      <span class="w-3 h-3 rounded-full bg-yellow-400"></span>
+      <span class="w-3 h-3 rounded-full bg-green-400"></span>
+      <span class="ml-2 text-xs text-text-secondary">user@blog — zsh</span>
+    </div>
+    <div class="p-5 space-y-3">
+      <div class="typing-line">
+        <span class="text-accent">➜</span> <span class="text-text-secondary">~</span> <span class="text-text">whoami</span>
+      </div>
+      <div class="pl-4 text-text-secondary output-line">
+        一位熱愛技術與寫作的開發者。這裡是思考與紀錄的空間。
+      </div>
+      <div class="typing-line">
+        <span class="text-accent">➜</span> <span class="text-text-secondary">~</span> <span class="text-text">cat motto.txt</span>
+      </div>
+      <div class="pl-4 text-text-secondary output-line">
+        好的技術文章不只傳遞知識，也傳遞觀點。
+      </div>
+      <div class="typing-line">
+        <span class="text-accent">➜</span> <span class="text-text-secondary">~</span> <span class="animate-pulse">▌</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .typing-line {
+    opacity: 0;
+    animation: fadeIn 0.6s ease forwards;
+  }
+  .output-line {
+    opacity: 0;
+    animation: fadeIn 0.6s ease forwards;
+  }
+  .typing-line:nth-child(1) { animation-delay: 0.2s; }
+  .output-line:nth-child(2) { animation-delay: 0.8s; }
+  .typing-line:nth-child(3) { animation-delay: 1.4s; }
+  .output-line:nth-child(4) { animation-delay: 2.0s; }
+  .typing-line:nth-child(5) { animation-delay: 2.6s; }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(4px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+</style>

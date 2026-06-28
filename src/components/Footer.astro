@@ -1,0 +1,14 @@
+---
+import { SITE } from '@/consts';
+---
+
+<footer class="w-full border-t border-border mt-16 py-10">
+  <div class="max-w-3xl mx-auto px-5 sm:px-6 flex flex-col sm:flex-row justify-between gap-4 text-sm text-text-secondary">
+    <p>© {new Date().getFullYear()} {SITE.author}. All rights reserved.</p>
+    <div class="flex gap-4">
+      <a href="/rss.xml" class="hover:text-accent">RSS</a>
+      <a href="https://twitter.com/yourhandle" target="_blank" rel="noopener noreferrer" class="hover:text-accent">Twitter</a>
+      <a href="https://github.com/yourusername" target="_blank" rel="noopener noreferrer" class="hover:text-accent">GitHub</a>
+    </div>
+  </div>
+</footer>
